@@ -11,5 +11,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: traefik-ingress-service
-          servicePort: 8080
+          serviceName: traefik-ingress-dashboard 
+          servicePort: 80

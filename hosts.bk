@@ -1,8 +1,8 @@
-# 部署节点：运行这份 ansible 脚本的节点
+# 部署节点：运行ansible 脚本的节点
 [deploy]
 192.168.18.34
 
-# etcd集群请提供如下NODE_NAME、NODE_IP变量,注意etcd集群必须是1,3,5,7...奇数个节点
+# etcd集群请提供如下NODE_NAME、NODE_IP变量,请注意etcd集群必须是1,3,5,7...奇数个节点
 [etcd]
 192.168.18.34 NODE_NAME=etcd1 NODE_IP="192.168.18.34"
 192.168.18.33 NODE_NAME=etcd2 NODE_IP="192.168.18.33"
@@ -10,26 +10,11 @@
 
 [kube-master]
 192.168.18.34 NODE_IP="192.168.18.34"
-192.168.18.33 NODE_IP="192.168.18.33"
-192.168.18.32 NODE_IP="192.168.18.32"
-
-
-# 负载均衡至少两个节点，安装 haproxy+keepalived
-[lb]
-192.168.18.34 LB_IF="ens192" LB_ROLE=master  # 注意根据实际使用网卡设置 LB_IF变量
-192.168.18.33 LB_IF="ens192" LB_ROLE=backup
-192.168.18.32 LB_IF="ens192" LB_ROLE=backup
-[lb:vars]
-master1="192.168.18.34:6443"	# 根据实际master节点数量设置
-master2="192.168.18.33:6443"	# 需同步设置roles/lb/templates/haproxy.cfg.j2 
-master3="192.168.18.32:6443"
-MASTER_PORT="8443"		# 设置 api-server VIP地址的服务端口
 
 [kube-node]
-192.168.18.34 NODE_ID=node1 NODE_IP="192.168.18.34"
-192.168.18.33 NODE_ID=node2 NODE_IP="192.168.18.33"
-192.168.18.32 NODE_ID=node3 NODE_IP="192.168.18.32"
-192.168.18.31 NODE_ID=node4 NODE_IP="192.168.18.31"
+192.168.18.33 NODE_ID=node1 NODE_IP="192.168.18.33"
+192.168.18.32 NODE_ID=node2 NODE_IP="192.168.18.32"
+192.168.18.34 NODE_ID=node3 NODE_IP="192.168.18.34"
 
 # 如果启用harbor，请配置后面harbor相关参数
 [harbor]
@@ -38,16 +23,17 @@ MASTER_PORT="8443"		# 设置 api-server VIP地址的服务端口
 # 预留组，后续添加node节点使用
 [new-node]
 #192.168.1.xx NODE_ID=node6 NODE_IP="192.168.1.xx"
-#192.168.1.xx NODE_ID=node7 NODE_IP="192.168.1.xx"
 
 [all:vars]
 # ---------集群主要参数---------------
-#集群 MASTER IP，一般为VIP地址
-MASTER_IP="192.168.18.225"
-KUBE_APISERVER="https://192.168.18.225:8443"
+#集群 MASTER IP
+MASTER_IP="192.168.18.34"
+
+#集群 APISERVER
+KUBE_APISERVER="https://192.168.18.34:6443"
 
 #TLS Bootstrapping 使用的 Token，使用 head -c 16 /dev/urandom | od -An -t x | tr -d ' ' 生成
-BOOTSTRAP_TOKEN="c30302226d4b810e08731702d3890f50"
+BOOTSTRAP_TOKEN="d18f94b5fa585c7123f56803d925d2e7"
 
 # 集群网络插件，目前支持calico和flannel
 CLUSTER_NETWORK="flannel"
@@ -96,7 +82,7 @@ bin_dir="/root/local/bin"
 #证书目录
 ca_dir="/etc/kubernetes/ssl"
 
-#部署目录，即 ansible 工作目录，建议不要修改
+#部署目录，即 ansible 工作目录
 base_dir="/etc/ansible"
 
 #私有仓库 harbor服务器 (域名或者IP)
